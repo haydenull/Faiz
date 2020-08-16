@@ -1,6 +1,6 @@
 {
-  "name": "faiz-cli",
-  "version": "1.0.0",
+  "name": "@kamen-rider/faiz-cli",
+  "version": "1.0.0-dev.1",
   "description": "",
   "main": "index.js",
   "bin": {
