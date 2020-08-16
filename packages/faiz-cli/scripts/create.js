@@ -39,7 +39,7 @@ async function create(appName) {
   }
 
   // 生成文件
-
+  await require('../lib/generate')(appName, targetDir)
 
 }
 
