@@ -5,6 +5,8 @@ const path = require('path')
 const debug = require('debug')('faiz:cli-generate')
 const { logWithSpinner, stopSpinner } = require('../util/spinner')
 const writeFileTree = require('../util/writeFileTree')
+const getNpmLatestVersion = require('../util/getNpmLatestVersion')
+const { resolve } = require('path')
 
 /**
  * Render template files into the virtual files tree object.
@@ -61,18 +63,66 @@ function renderFile(fileName, data = {}, ejsOptions = {}) {
   return ejs.render(template, data, ejsOptions)
 }
 
+/**
+ * 生成 package.json 文件内容
+ * @param {*} appName
+ */
+async function renderPackageJson(appName) {
+  try {
+    const npmPkgs = ['vue', 'vue-property-decorator' ]
+    const npmPkgsVersion = await getNpmLatestVersion(npmPkgs)
+    debugger
+    // 生成 package.json
+    const pkg = {
+      name: appName,
+      version: '0.1.0',
+      author: '',
+      main: 'src/index.js',
+      private: true,
+      scripts: {
+        dev: 'faiz dev',
+        test: 'faiz test',
+        build: 'faiz build',
+      },
+      dependencies: {
+        vue: `^${npmPkgsVersion.vue}`,
+        "vue-property-decorator": `^${npmPkgsVersion['vue-property-decorator']}`,
+      },
+      devDependencies: {
+        // TODO：项目本地安装 faiz-cli
+        // vue-template-compiler 与 vue 版本号同步
+        "vue-template-compiler": `^${npmPkgsVersion.vue}`,
+      },
+      eslintConfig: {},
+    }
+    return pkg
+  } catch (error) {
+    console.log('=== 网络异常 ===', error)
+    process.exit(1)
+  }
+}
+
+/**
+ * 下载 npm 包
+ */
+async function pkgInstall(targetDir) {
+  const execa = require('execa')
+  try {
+    await execa('npm', ['install', '--loglevel', 'error' ], {
+      cwd: targetDir,
+    })
+  } catch (error) {
+    console.log('=== npm install error ===', error)
+  }
+}
+
 module.exports = async function(appName, dest) {
   console.log('before creating......')
+  console.log()
 
   logWithSpinner(`✨`, `Creating project in ${chalk.yellow(dest)}.`)
 
-  // 生成 package.json
-  const pkg = {
-    name: appName,
-    version: '0.1.0',
-    private: true,
-    devDependencies: {},
-  }
+  const pkg = await renderPackageJson(appName)
   await writeFileTree(dest, {
     'package.json': JSON.stringify(pkg, null, 2),
   })
@@ -83,8 +133,11 @@ module.exports = async function(appName, dest) {
   debug('files', Object.keys(files))
   await writeFileTree(dest, files)
 
+  await pkgInstall(dest)
+
 
   stopSpinner()
   console.log(`🎉  Successfully created project ${chalk.yellow(appName)}.`)
+  console.log()
 
 }
