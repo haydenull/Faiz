@@ -80,7 +80,7 @@ async function renderPackageJson(appName) {
       main: 'src/index.js',
       private: true,
       scripts: {
-        dev: 'faiz dev',
+        dev: 'faiz serve',
         test: 'faiz test',
         build: 'faiz build',
       },

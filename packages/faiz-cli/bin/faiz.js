@@ -31,4 +31,12 @@ program
     require('../scripts/create')(appName)
   })
 
+// serve
+program
+  .command('serve')
+  .description('serve your app')
+  .action((appName, cmd) => {
+    require('../scripts/serve')(appName)
+  })
+
 program.parse(process.argv)

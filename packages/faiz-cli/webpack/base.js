@@ -37,4 +37,5 @@ module.exports = function() {
       path: path.resolve(__dirname, 'dist'),
     },
   }
+  return baseConfig
 }

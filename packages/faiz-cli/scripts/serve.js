@@ -1,5 +1,6 @@
 process.env.NODE_ENV = 'development'
 
+const chalk = require('chalk')
 const ora = require('ora')
 const webpack = require('webpack')
 const getWebpackConfig = require('../webpack/dev')
@@ -7,6 +8,7 @@ const getWebpackConfig = require('../webpack/dev')
 const spinner = ora('Starting development server...')
 
 function createDevServer (webpackConfig) {
+  console.log('=== webpack ===', webpackConfig)
   const compiler = webpack(webpackConfig)
 
   const DevServer = require('webpack-dev-server')
@@ -18,7 +20,16 @@ function createDevServer (webpackConfig) {
 async function serve() {
   spinner.start()
 
-  const devServer = createDevServer(getWebpackConfig())
+  const webpackConfig = getWebpackConfig()
+  const devServer = createDevServer(webpackConfig)
+
+  // Ctrl + C 触发
+  ;['SIGINT', 'SIGTERM'].forEach(sig => {
+    process.on(sig, () => {
+      devServer.close()
+      process.exit()
+    })
+  })
 
   return devServer.listen(port, '0.0.0.0', err => {
     if (err) return console.log(err)
