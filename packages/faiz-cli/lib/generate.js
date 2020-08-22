@@ -6,7 +6,6 @@ const debug = require('debug')('faiz:cli-generate')
 const { logWithSpinner, stopSpinner } = require('../util/spinner')
 const writeFileTree = require('../util/writeFileTree')
 const getNpmLatestVersion = require('../util/getNpmLatestVersion')
-const { resolve } = require('path')
 
 /**
  * Render template files into the virtual files tree object.

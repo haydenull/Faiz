@@ -1,58 +1,41 @@
+const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const baseConfig = require('./base')
 
 module.exports = function() {
   const devConfig = {
     mode: 'development',
-    entry: './index.ts',
+    entry: path.resolve(process.cwd(), './src/main.js'),
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/,
-          options: {
-            appendTsSuffixTo: [/\.vue$/],
-            transpileOnly: true,
-            compilerOptions: {
-              module: 'es2015'
-            },
-          },
-        },
-        {
           test: /\.vue$/,
-          loader: 'vue-loader',
+          loader: require.resolve('vue-loader'),
         },
         {
           test: /\.css$/,
-          loader: ['vue-style-loader', 'css-loader'],
+          loader: [
+            require.resolve('vue-style-loader'),
+            require.resolve('css-loader')
+          ],
         },
         {
           test: /\.(js|jsx)$/,
-          loader: 'babel-loader',
+          loader: require.resolve('babel-loader'),
         },
       ],
     },
     resolve: {},
     output: {
       filename: 'index.min.js',
-      path: path.resolve(__dirname, 'dist'),
-    },
-    devServer: {
-      host: 'localhost',
-      port: 3002,
-      historyApiFallback: {
-        rewrites: [{ from: /./, to: '/index.html' }],
-      },
-      hot: true,
-      open: true,
+      path: path.resolve(process.cwd(), './dist'),
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
-        template: 'examples/index.html',
+        template: './public/index.html',
         filename: 'index.html',
         inject: true,
       }),
