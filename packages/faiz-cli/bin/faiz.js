@@ -39,4 +39,12 @@ program
     require('../scripts/serve')(appName)
   })
 
+// serve
+program
+  .command('build')
+  .description('build your app')
+  .action((appName, cmd) => {
+    require('../scripts/build')(appName)
+  })
+
 program.parse(process.argv)

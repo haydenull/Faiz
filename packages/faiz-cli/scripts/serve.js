@@ -31,8 +31,6 @@ async function serve() {
   const webpackConfig = getWebpackConfig()
   const devServer = createDevServer(webpackConfig)
 
-  console.log('=== devServer ===', devServer)
-
   // Ctrl + C 触发
   ;['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
