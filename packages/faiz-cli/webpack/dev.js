@@ -42,6 +42,7 @@ module.exports = function() {
           test: /\.css$/,
           loader: [
             require.resolve('vue-style-loader'),
+            require.resolve('style-loader'),
             require.resolve('css-loader'),
           ]
         },
