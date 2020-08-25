@@ -9,6 +9,7 @@ async function build() {
   console.log('start build')
   console.log()
 
+  console.log('==== webpack config ===', getWebpackConfig())
   const compiler = webpack(getWebpackConfig())
 
   return new Promise((reslove, reject) => {

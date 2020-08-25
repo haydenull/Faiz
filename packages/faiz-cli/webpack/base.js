@@ -1,40 +1,37 @@
 module.exports = function() {
   const baseConfig = {
-    mode: 'development',
-    entry: './index.ts',
+    entry: path.resolve(process.cwd(), './src/main.js'),
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/,
+          test: /\.(png|jpe?g|gif|webp|bmp)(\?.*)?$/,
+          loader: require.resolve('url-loader'),
           options: {
-            appendTsSuffixTo: [/\.vue$/],
-            transpileOnly: true,
-            compilerOptions: {
-              module: 'es2015'
-            },
-          },
-        },
-        {
-          test: /\.vue$/,
-          loader: 'vue-loader',
-        },
-        {
-          test: /\.css$/,
-          loader: ['vue-style-loader', 'css-loader'],
+            limit: 1024 * 4,
+            esModule: false,
+            name: 'static/img/[name].[contenthash:8].[ext]',
+          }
         },
         {
           test: /\.(js|jsx)$/,
-          loader: 'babel-loader',
+          loader: require.resolve('babel-loader'),
         },
       ],
     },
-    plugins: [],
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
+        filename: 'index.html',
+        inject: true,
+      }),
+    ],
     resolve: {},
     output: {
-      filename: 'index.min.js',
-      path: path.resolve(__dirname, 'dist'),
+      pathinfo: true,
+      filename: 'static/js/[name].js',
+      chunkFilename: 'static/js/[name].chunk.js',
+      publicPath: '/',
+      path: path.resolve(process.cwd(), 'dist'),
     },
   }
   return baseConfig
