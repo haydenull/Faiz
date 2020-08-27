@@ -1,3 +1,6 @@
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
 module.exports = function() {
   const baseConfig = {
     entry: path.resolve(process.cwd(), './src/main.js'),
