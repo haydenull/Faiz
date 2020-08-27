@@ -1,6 +1,6 @@
 {
   "name": "@kamen-rider/faiz-cli",
-  "version": "0.0.1-dev.4",
+  "version": "0.0.1-dev.5",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -30,6 +30,7 @@
     "globby": "^11.0.1",
     "html-webpack-plugin": "^4.3.0",
     "inquirer": "^7.3.3",
+    "isbinaryfile": "^4.0.6",
     "mini-css-extract-plugin": "^0.10.0",
     "node-fetch": "^2.6.0",
     "ora": "^5.0.0",

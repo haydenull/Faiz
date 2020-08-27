@@ -2,6 +2,7 @@ const chalk = require('chalk')
 const ejs = require('ejs')
 const fs = require('fs-extra')
 const path = require('path')
+const { isBinaryFileSync  } = require('isbinaryfile')
 const debug = require('debug')('faiz:cli-generate')
 const { logWithSpinner, stopSpinner } = require('../util/spinner')
 const writeFileTree = require('../util/writeFileTree')
@@ -42,7 +43,7 @@ async function render(source, additionalData = {}, ejsOptions = {}) {
 
     const sourcePath = path.resolve(source, rawPath) // path/node_modules/faiz-cli/templates/vue/src/App.vue
     const fileContent = renderFile(sourcePath, additionalData, ejsOptions)
-    if (fileContent.trim()) {
+    if (Buffer.isBuffer(fileContent) || fileContent.trim()) {
       files[targetPath] = fileContent
     }
   }
@@ -58,6 +59,9 @@ async function render(source, additionalData = {}, ejsOptions = {}) {
  * 渲染文件
  */
 function renderFile(fileName, data = {}, ejsOptions = {}) {
+  // 检测是否为二进制文件
+  if (isBinaryFileSync(fileName)) return fs.readFileSync(fileName)  // return buffer
+
   const template = fs.readFileSync(fileName, 'utf-8')
   return ejs.render(template, data, ejsOptions)
 }
@@ -68,7 +72,7 @@ function renderFile(fileName, data = {}, ejsOptions = {}) {
  */
 async function renderPackageJson(appName) {
   try {
-    const npmPkgs = ['vue', 'vue-property-decorator' ]
+    const npmPkgs = ['vue', 'vue-property-decorator', '@kamen-rider/faiz-cli' ]
     const npmPkgsVersion = await getNpmLatestVersion(npmPkgs)
     debugger
     // 生成 package.json
@@ -88,7 +92,7 @@ async function renderPackageJson(appName) {
         "vue-property-decorator": `^${npmPkgsVersion['vue-property-decorator']}`,
       },
       devDependencies: {
-        // TODO：项目本地安装 faiz-cli
+        "@kamen-rider/faiz-cli": `^${npmPkgsVersion['@kamen-rider/faiz-cli']}`,
         // vue-template-compiler 与 vue 版本号同步
         "vue-template-compiler": `^${npmPkgsVersion.vue}`,
       },
